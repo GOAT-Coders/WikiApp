@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -171,6 +173,260 @@ namespace AT1WikiApp
             categoryBox.Clear();
 
             MessageBox.Show("The text boxes were cleared.", "Info");
+        }
+    
+
+
+
+        private void BubbleSort(string?[,] arr)
+        {
+            for (int i = 0; i < arr.GetLength(0) - 1; i++)
+            {
+                for (int j = 0; j < arr.GetLength(0) - i - 1; j++)
+                {
+                    if (string.Compare(arr[j, 0], arr[j + 1, 0]) > 0)
+                    {
+                        if (arr[j + 1, 0] != null)
+                        {
+                            Swap(arr, j, j + 1);
+                        }
+                    }
+                }
+            }
+            DisplayString(arr);
+        }
+
+        private void bubbleSortButton_Click(object sender, EventArgs e)
+        {
+            BubbleSort(stringArray);
+        }
+
+        private void Swap(string?[,] arr, int x, int y)
+        {
+            for (int i = 0; i < arr.GetLength(1); i++)
+            {
+                string temp = arr[x, i];
+                arr[x, i] = arr[y, i];
+                arr[y, i] = temp;
+            }
+        }
+
+        private void DisplayString(string?[,] arr)
+        {
+            listBox.Items.Clear();
+            for (int i = 0; i < arr.GetLength(0); i++)
+            {
+                if (arr[i, 0] != null)
+                {
+                    listBox.Items.Add(new { Name = stringArray[i, 0], Structure = stringArray[i, 1], Definition = stringArray[i, 2], Category = stringArray[i, 3] });
+                }
+            }
+            MessageBox.Show("The array was bubble sorted.", "Info");
+        }
+
+
+
+        private void binarySearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Get the name to search for from the searchTextBox
+            string searchName = binarySearchBox.Text;
+
+            // Sort the array using BubbleSort
+            BubbleSort(stringArray);
+
+            // Perform binary search on the name column of the sorted stringArray
+            int row = BinarySearch(stringArray, searchName, 0);
+
+            // Check if the search was successful
+            if (row == -1)
+            {
+                // Display an error message if the name was not found
+                MessageBox.Show($"The name '{searchName}' was not found in the array.", "Error");
+            }
+            else
+            {
+                // Display the information corresponding to the name if found
+                nameBox.Text = stringArray[row, 0];
+                structureBox.Text = stringArray[row, 1];
+                definitionBox.Text = stringArray[row, 2];
+                categoryBox.Text = stringArray[row, 3];
+            }
+
+            // Clear the searchTextBox
+            binarySearchBox.Text = "";
+        }
+
+
+
+
+        private int BinarySearch(string?[,] array, string searchValue, int searchColumn)
+        {
+            // Initialize the min and max variables that will be used to keep track of the range of indexes in the array to search.
+            int min = 0;
+            int max = 0;
+
+            // Loop through the first dimension of the array
+            for (int i = 0; i < array.GetLength(0); i++)
+            {
+                // Check if the element in the first column of the current row is null
+                if (array[i, 0] == null)
+                {
+                    // If it is null, store the index of the current row in 'max' variable and break the loop
+                    max = i;
+                    break;
+                }
+            }
+
+            // If no element in the first column of the array is null, set 'max' to the length of the first dimension of the array
+            if (max == 0) max = array.GetLength(0);
+
+
+            // Use a while loop to continue searching while there are still indexes to search.
+            while (min <= max)
+            {
+                // Calculate the mid index between min and max.
+                int mid = (min + max) / 2;
+
+                // Compare the searchValue with the value at the mid index in the name column.
+                string midValue = array[mid, 0];
+
+                // Compare the value at the mid index with the search value and store the result in the compareResult variable.
+                int compareResult = string.Compare(midValue, searchValue);
+
+                // If the searchValue is found at the mid index, return the index.
+                if (compareResult == 0)
+                {
+                    MessageBox.Show($"The name '{searchValue}' was found in the array at index {mid}.", "Info");
+
+                    // Found the searchValue
+                    return mid;
+                }
+                // If the searchValue is greater than the value at the mid index, search the right half of the array.
+                else if (compareResult < 0)
+                {
+                    // searchValue is greater than mid, search the right half of the array
+                    min = mid + 1;
+                }
+                else
+                {
+                    // searchValue is less than mid, search the left half of the array
+                    max = mid - 1;
+                }
+            }
+
+            // searchValue was not found, return -1.
+            return -1;
+
+        }
+
+
+
+
+
+        private void saveButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Set the default file name to "definitions.dat"
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.FileName = "definitions.dat";
+            saveFileDialog.Filter = "Data Files (*.dat)|*.dat|All Files (*.*)|*.*";
+
+            if (saveFileDialog.ShowDialog() != true)
+            {
+                // User canceled the dialog
+                return;
+            }
+
+            // Sort the array by name before saving
+            BubbleSort(stringArray);
+
+            // Open the file stream and binary writer
+            using (FileStream fileStream = new FileStream(saveFileDialog.FileName, FileMode.Create))
+            using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
+            {
+                int rowCount = stringArray.GetLength(0);
+                int columnCount = stringArray.GetLength(1);
+
+                // Write the number of rows and columns
+                binaryWriter.Write(rowCount);
+                binaryWriter.Write(columnCount);
+
+                // Write the data
+                for (int i = 0; i < rowCount; i++)
+                {
+                    for (int j = 0; j < columnCount; j++)
+                    {
+                        string value = stringArray[i, j] ?? string.Empty;
+                        if (!string.IsNullOrEmpty(value))
+                        {
+                            binaryWriter.Write(value);
+                        }
+                        else
+                        {
+                            binaryWriter.Write(string.Empty);
+                        }
+                    }
+
+                }
+            }
+            MessageBox.Show("The entries were saved.", "Info");
+        }
+
+
+
+
+
+        private void loadButton_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
+            openFileDialog.Filter = "Binary files (*.dat)|*.dat";
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    using (FileStream fileStream = new FileStream(openFileDialog.FileName, FileMode.Open))
+                    {
+                        BinaryReader binaryReader = new BinaryReader(fileStream);
+                        int rowCount = binaryReader.ReadInt32();
+                        int columnCount = binaryReader.ReadInt32();
+                        string?[,] array = new string[rowCount, columnCount];
+
+                        for (int i = 0; i < rowCount; i++)
+                        {
+                            for (int j = 0; j < columnCount; j++)
+                            {
+                                string value = binaryReader.ReadString();
+                                array[i, j] = value;
+                            }
+                        }
+
+                        binaryReader.Close();
+                        stringArray = array;
+
+                        // Clear and update the ListBox
+                        listBox.Items.Clear();
+                        for (int i = 0; i < rowCount; i++)
+                        {
+                            string item = "";
+                            for (int j = 0; j < columnCount; j++)
+                            {
+                                string value = array[i, j] ?? "";
+                                item += value + "\t";
+                            }
+                            // if (array[i, 0] != null && array[i, 1] != null && array[i, 2] != null && array[i, 3] != null)
+                            if (stringArray[i, 0] != null && stringArray[i, 1] != null && stringArray[i, 2] != null && stringArray[i, 3] != null)
+                            {
+                                listBox.Items.Add(new { Name = stringArray[i, 0], Structure = stringArray[i, 1], Definition = stringArray[i, 2], Category = stringArray[i, 3] });
+                            }
+                        }
+                    }
+                    MessageBox.Show("The entries were loaded.", "Info");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+            }
         }
     }
 }
