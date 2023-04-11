@@ -1,5 +1,5 @@
 ﻿AT1WikiApp
-1.0.0.0
+
 
 winexe
 C#
@@ -12,9 +12,9 @@ TRACE;DEBUG;NET;NET6_0;NETCOREAPP
 F:\TAFE\Cluster - C Sharp Two\AT1WikiAppRepo\WikiApp\AT1WikiApp\App.xaml
 11407045341
 
-6-1424804405
+4-259603229
 194101785492
 MainWindow.xaml;
 
-False
+True
 

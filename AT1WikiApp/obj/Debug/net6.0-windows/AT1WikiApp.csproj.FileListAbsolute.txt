@@ -1,0 +1,5 @@
+F:\TAFE\Cluster - C Sharp Two\AT1WikiAppRepo\WikiApp\AT1WikiApp\obj\Debug\net6.0-windows\AT1WikiApp.csproj.AssemblyReference.cache
+F:\TAFE\Cluster - C Sharp Two\AT1WikiAppRepo\WikiApp\AT1WikiApp\obj\Debug\net6.0-windows\MainWindow.g.cs
+F:\TAFE\Cluster - C Sharp Two\AT1WikiAppRepo\WikiApp\AT1WikiApp\obj\Debug\net6.0-windows\App.g.cs
+F:\TAFE\Cluster - C Sharp Two\AT1WikiAppRepo\WikiApp\AT1WikiApp\obj\Debug\net6.0-windows\AT1WikiApp_MarkupCompile.cache
+F:\TAFE\Cluster - C Sharp Two\AT1WikiAppRepo\WikiApp\AT1WikiApp\obj\Debug\net6.0-windows\AT1WikiApp_MarkupCompile.lref
